@@ -1,7 +1,5 @@
 var myAppModule = angular.module('myApp', ['ui.router']);
 myAppModule.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
-    //$urlRouterProvider.otherwise("/");
-
     $locationProvider.html5Mode({
         enabled: true,
         requireBase: false
@@ -10,28 +8,35 @@ myAppModule.config(function($stateProvider, $urlRouterProvider, $locationProvide
     $stateProvider
         .state('landing', {
             url: "/",
-            templateUrl: "../templates/landing.html"
+            templateUrl: "../templates/landing.html",
+            controller: 'LandingController'
         })
         .state('collection', {
             url: "/collection",
-            templateUrl: "../templates/collection.html"
+            templateUrl: "../templates/collection.html",
+            controller: 'CollectionController'
         })
         .state('album', {
             url: "/album",
-            templateUrl: "../templates/album.html"
+            templateUrl: "../templates/album.html",
+            controller: 'AlbumController'
         })
 });
 
-myAppModule.factory('coolthings', function () {
-    return { coolThings:
-        [
-    {name: 'fiorst cool thing'},
-    {name: 'second cool thing'}
-        ]
-    }
-})
+myAppModule.controller('LandingController', ['$scope', function($scope) {
+    $scope.mainTitle = "Turn the music up!";
+}]);
 
-myAppModule.controller('album', ['$scope, $interval, coolthings', function ($scope, $interval, coolthings) {
-    $scope.albumPicaso = albumPicaso;
-    $scope.coolthings = coolthings.coolThings;
+myAppModule.controller('CollectionController', ['$scope', function($scope) {
+    var albumsArray = [];
+    for (var i = 0; i < 8; i++) {
+        var currentAlbum = angular.copy(albumPicasso);
+        albumsArray.push(currentAlbum);
+    }
+
+    $scope.albums = albumsArray;
+}]);
+
+myAppModule.controller('AlbumController', ['$scope', function($scope) {
+    $scope.albumPicasso = albumPicasso;
 }]);
