@@ -50,7 +50,9 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
 
     $scope.playPause = function(songIndex){
         SongPlayer.isPlaying(songIndex);
-        SongPlayer.setSong(songIndex);
+        if (songIndex !== SongPlayer.currentSongIndex) {
+            SongPlayer.setSong(songIndex);
+        }
 
         if(SongPlayer.playing){
             SongPlayer.pause();
@@ -58,6 +60,7 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
         else{
             SongPlayer.play();
         }
+        $scope.isPlaying = SongPlayer.playing;
     };
 
     $scope.nextSong = function() {
@@ -69,7 +72,7 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
     };
 
     $scope.playSong = function(){
-        $scope.isPlaying = SongPlayer.playing;
+        //$scope.isPlaying = SongPlayer.playing;
         if(SongPlayer.playing){
             SongPlayer.pause();
         }
@@ -80,7 +83,7 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
     };
 }]);
 
-myAppModule.factory('SongPlayer', function() {
+myAppModule.service('SongPlayer', function() {
     return {
         currentAlbum: albumPicasso,
         currentSoundFile: null,
