@@ -46,7 +46,25 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
     $scope.currentSongTime = SongPlayer.currentSongTime;
     $scope.currentSongInAlbum = $scope.currentAlbum.songs[$scope.currentSongIndex];
 
-    //alert($scope.currentAlbum.name + "  " + $scope.currentSongInAlbum.name);
+    var hoveredSongIndex = null;
+
+    $scope.onSongHover = function(songIndex) {
+        hoveredSongIndex = songIndex;
+    };
+
+    $scope.offSongHover = function() {
+        hoveredSongIndex = null;
+    };
+
+    $scope.getSongClass = function(songIndex) {
+        if (songIndex === SongPlayer.currentSongIndex && SongPlayer.playing) {
+            return 'playing';
+        }
+        else if (songIndex === hoveredSongIndex || songIndex === SongPlayer.currentSongIndex) {
+            return 'hovered';
+        }
+        return 'default';
+    };
 
     $scope.playPause = function(songIndex){
         SongPlayer.isPlaying(songIndex);
