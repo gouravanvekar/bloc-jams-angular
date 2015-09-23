@@ -79,6 +79,8 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
             SongPlayer.play();
         }
         $scope.isPlaying = SongPlayer.playing;
+        $scope.currentSongName= SongPlayer.currentSongName;
+        $scope.currentArtistName= SongPlayer.currentArtistName;
     };
 
     $scope.nextSong = function() {
@@ -110,6 +112,8 @@ myAppModule.service('SongPlayer', function() {
         currentVolume: 50,
         currentSongTime: 0,
         playing: false,
+        currentSongName: null,
+        currentArtistName: null,
         pause: function() {
             this.playing = false;
             this.paused = true;
@@ -149,6 +153,9 @@ myAppModule.service('SongPlayer', function() {
                 preload: true
             });
             this.setVolume(this.currentVolume);
+
+            this.currentSongName= albumPicasso.songs[songIndex].name;
+            this.currentArtistName= albumPicasso.artist;
         },
         isPlaying: function(songIndex){
             if(this.currentSongIndex === songIndex && this.paused === false) {
@@ -174,3 +181,14 @@ myAppModule.service('SongPlayer', function() {
         }
     }
 });
+
+myAppModule.directive('slider', ['$document', function($document){
+    return{
+        templateUrl: '../templates/slider.html',
+        replace: true,
+        restrict: 'E',
+        link: function(scope, element, attributes) {
+
+        }
+    }
+}]);
