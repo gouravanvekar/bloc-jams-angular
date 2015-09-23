@@ -25,7 +25,7 @@
                 </span>
             </td>
             <td class="song-item-title">{{ song.name }}</td>
-            <td class="song-item-duration">{{ song.length }}</td>
+            <td class="song-item-duration">{{ song.length | timeFilter }}</td>
         </tr>
     </table>
 </main>
@@ -48,8 +48,8 @@
             <h2 class="artist-song-mobile">{{ currentArtistName }}</h2>
             <div class="seek-control">
                 <slider></slider>
-                <div class="current-time">{{ currentSongTime }}</div>
-                <div class="total-time"> {{ currentSongInAlbum.length }}</div>
+                <div class="current-time">{{ currentSongTime | timeFilter }}</div>
+                <div class="total-time"> {{ currentSongInAlbum.length | timeFilter }}</div>
             </div>
             <h3 class="artist-name">{{ currentArtistName }}</h3>
         </div>

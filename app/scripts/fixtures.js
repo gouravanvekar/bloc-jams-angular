@@ -7,9 +7,9 @@ var albumPicasso = {
     albumArtUrl: 'assets/images/album_covers/18.png',
     songs: [
         { name: 'Blue', length: '263', audioUrl: 'assets/music/blue' },
-        { name: 'Green', length: '956', audioUrl: 'assets/music/green' },
+        { name: 'Green', length: '256', audioUrl: 'assets/music/green' },
         { name: 'Red', length: '352', audioUrl: 'assets/music/red' },
-        { name: 'Pink', length: '864', audioUrl: 'assets/music/pink' },
+        { name: 'Pink', length: '364', audioUrl: 'assets/music/pink' },
         { name: 'Magenta', length: '326', audioUrl: 'assets/music/magenta' }
     ]
 };
