@@ -44,7 +44,14 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
     $scope.isPlaying = SongPlayer.playing;
     SongPlayer.trackTime();
     $scope.currentSongTime = SongPlayer.currentSongTime;
-    $scope.currentSongInAlbum = $scope.currentAlbum.songs[$scope.currentSongIndex];
+
+    $scope.songPlayer = SongPlayer;
+
+    SongPlayer.onTimeUpdate(function(event, time) {
+        $scope.$apply(function() {
+            $scope.currentSongTime = time;
+        });
+    });
 
     var hoveredSongIndex = null;
 
@@ -81,6 +88,7 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
         $scope.isPlaying = SongPlayer.playing;
         $scope.currentSongName= SongPlayer.currentSongName;
         $scope.currentArtistName= SongPlayer.currentArtistName;
+        $scope.currentSongTotalTime = SongPlayer.totalSongLength;
     };
 
     $scope.nextSong = function() {
@@ -92,7 +100,6 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
     };
 
     $scope.playSong = function(){
-        //$scope.isPlaying = SongPlayer.playing;
         if(SongPlayer.playing){
             SongPlayer.pause();
         }
@@ -103,7 +110,7 @@ myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($sco
     };
 }]);
 
-myAppModule.service('SongPlayer', function() {
+myAppModule.service('SongPlayer', [ '$rootScope', function($rootScope) {
     return {
         currentAlbum: albumPicasso,
         currentSoundFile: null,
@@ -113,6 +120,7 @@ myAppModule.service('SongPlayer', function() {
         currentSongTime: 0,
         playing: false,
         currentSongName: null,
+        totalSongLength: null,
         currentArtistName: null,
         pause: function() {
             this.playing = false;
@@ -155,6 +163,7 @@ myAppModule.service('SongPlayer', function() {
             this.setVolume(this.currentVolume);
 
             this.currentSongName= albumPicasso.songs[songIndex].name;
+            this.totalSongLength= albumPicasso.songs[songIndex].length;
             this.currentArtistName= albumPicasso.artist;
         },
         isPlaying: function(songIndex){
@@ -168,6 +177,7 @@ myAppModule.service('SongPlayer', function() {
             if (this.currentSoundFile) {
                 this.currentSoundFile.setVolume(volume);
             }
+            this.currentVolume = volume;
         },
         setTime: function(time) {
             if (this.currentSoundFile) {
@@ -178,19 +188,107 @@ myAppModule.service('SongPlayer', function() {
             if (this.currentSoundFile) {
                 this.currentSongTime = this.currentSoundFile.getTime();
             }
+        },
+        seek: function(time) {
+            if (this.currentSoundFile) {
+                this.currentSoundFile.setTime(time);
+            }
+        },
+        onTimeUpdate: function(callback) {
+            return $rootScope.$on('sound:timeupdate', callback);
         }
     }
-});
+}]);
 
 myAppModule.directive('slider', ['$document', function($document){
+
+    var getSliderPercentage = function($slider, event) {
+        var offsetX = event.pageX - $slider.offset().left;
+        var sliderWidth = $slider.width();
+        var offsetXPercent = (offsetX / sliderWidth);
+        offsetXPercent = Math.max(0,offsetXPercent);
+        offsetXPercent = Math.min(1, offsetXPercent);
+        return offsetXPercent;
+    };
+
+    var getNumericValue = function(input, defaultValue) {
+        if (typeof input === 'number') {
+            return input;
+        }
+
+        if (typeof input === 'undefined') {
+            return defaultValue;
+        }
+
+        if (typeof input === 'string') {
+            return Number(input);
+        }
+    };
+
     return{
         templateUrl: '../templates/slider.html',
         replace: true,
         restrict: 'E',
+        scope: {
+            onChange: '&'
+        },
         link: function(scope, element, attributes) {
+            scope.value = 0;
+            scope.max = 100;
 
+            var $seekBar = element;
+
+            attributes.$observe('value', function(newValue) {
+                scope.value = getNumericValue(newValue, 0);
+            });
+
+            attributes.$observe('max', function(newValue) {
+                scope.max = getNumericValue(newValue, 100) || 100;
+            });
+
+            var percentString = function() {
+                var value = scope.value || 0;
+                var max = scope.max || 100;
+                var percent = value / max * 100;
+                return percent + "%";
+            };
+
+            scope.fillStyle = function() {
+                return {width: percentString()};
+            };
+
+            scope.thumbStyle = function() {
+                return {left: percentString()};
+            };
+
+            scope.onClickSlider = function(event) {
+                var percent = getSliderPercentage($seekBar, event);
+                scope.value = percent * scope.max;
+                notifyCallback(scope.value);
+            };
+
+            scope.trackThumb = function() {
+                $document.bind('mousemove.thumb', function(event) {
+                    var percent = getSliderPercentage($seekBar, event);
+                    scope.$apply(function() {
+                        scope.value = percent * scope.max;
+                        notifyCallback(scope.value);
+                    });
+                });
+
+                $document.bind('mouseup.thumb', function() {
+                    $document.unbind('mousemove.thumb');
+                    $document.unbind('mouseup.thumb');
+                });
+            };
+
+            var notifyCallback = function(newValue) {
+                if (typeof scope.onChange === 'function') {
+                    scope.onChange({value: newValue});
+                }
+            };
         }
-    }
+    };
 }]);
 
 myAppModule.filter('timeFilter', function() {
