@@ -33,7 +33,7 @@
      position: relative;
      padding: 2rem;
      text-align: center;
-     opacity: 0;
+     opacity: 1;
      -webkit-transform: scaleX(0.9) translateY(3rem);
      -moz-transform: scaleX(0.9) translateY(3rem);
      transform: scaleX(0.9) translateY(3rem);
@@ -54,4 +54,31 @@
  .ion-iphone {
      color: rgb(233,50,117);
      font-size: 5rem;
+ }
+
+ .footer{
+     position: relative;
+     top: 50px;
+     margin-bottom: 50px;
+     text-align: center;
+ }
+
+ .footer-link{
+     color: #E93275;
+     text-decoration: none;
+ }
+
+ a.footer-link{
+     color: #E93275;
+     text-decoration: none;
+ }
+
+ a.footer-link:hover{
+     color: #fff;
+     text-decoration: none;
+ }
+
+ .git-button{
+     position: relative;
+     top: 20px;
  }

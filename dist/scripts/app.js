@@ -24,10 +24,37 @@ myAppModule.config(function($stateProvider, $urlRouterProvider, $locationProvide
 });
 
 myAppModule.controller('LandingController', ['$scope', function($scope) {
+    $('body').css('background-image', 'none');
+    $('body').css('padding-bottom', '0px');
     $scope.mainTitle = "Turn the music up!";
+
+    var animatePoints = function () {
+        var revealPoint = function () {
+            $(this).css({
+                opacity: 1,
+                transform: 'scaleX(1) translateY(0)'
+            });
+        };
+
+        $.each($('.point'), revealPoint);
+    };
+
+    $(window).load(function() {
+        if ($(window).height() > 950) {
+            animatePoints();
+        }
+
+        $(window).scroll(function(event) {
+            if ($(window).scrollTop() >= 500) {
+                animatePoints();
+            }
+        });
+    });
 }]);
 
 myAppModule.controller('CollectionController', ['$scope', function($scope) {
+    $('body').css('background-image', 'url("../assets/images/blurred_backgrounds/blur_bg_2.jpg")');
+    $('body').css('padding-bottom', '0px');
     var albumsArray = [];
     for (var i = 0; i < 8; i++) {
         var currentAlbum = angular.copy(albumPicasso);
@@ -38,6 +65,9 @@ myAppModule.controller('CollectionController', ['$scope', function($scope) {
 }]);
 
 myAppModule.controller('AlbumController', ['$scope', 'SongPlayer', function($scope, SongPlayer) {
+    $('body').css('background-image', 'url("../assets/images/blurred_backgrounds/blur_bg_2.jpg")');
+    $('body').css('padding-bottom', '150px');
+
     $scope.currentAlbum = SongPlayer.currentAlbum;
     $scope.currentSoundFile = SongPlayer.currentSoundFile;
     $scope.currentSongIndex = SongPlayer.currentSongIndex;

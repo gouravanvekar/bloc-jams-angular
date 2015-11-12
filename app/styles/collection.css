@@ -1,5 +1,4 @@
 body.collection {
-     background-image: url(../assets/images/blurred_backgrounds/blur_bg_2.jpg);
      background-repeat: repeat-y;
      background-position: center center;
      background-size: cover;
@@ -32,6 +31,7 @@ body.collection {
  
  .collection-album-container .caption p a.album-name {
      color: white;
+     text-decoration: none;
  }
  
  .collection-album-container img {
